@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New post</title>
+    <link rel="stylesheet" href="../views/styles.css" />
+    <script
+      src="https://kit.fontawesome.com/b547ec51a0.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="homeContainer">
+      <nav>
+        <div class="flexContainer">
+          <div class="flexItem">
+            <button class="button buttonHover">
+              <i class="fa fa-home"></i>
+            </button>
+          </div>
+          <div class="flexItem">
+            <button class="button buttonHover">
+              <i class="fa fa-couch"></i>
+            </button>
+          </div>
+          <div class="flexItem">
+            <button class="button buttonHover">
+              <i class="fa fa-user"></i>
+            </button>
+          </div>
+          <div class="flexItem">
+            <button class="button buttonHover">
+              <i class="fa fa-message"></i>
+            </button>
+          </div>
+          <div class="flexItem">
+            <button class="button buttonHover">
+              <i class="fa fa-bell"></i>
+            </button>
+          </div>
+          <div class="flexItem">
+            <button class="button buttonHover">
+              <i class="fa fa-gear"></i>
+            </button>
+          </div>
+          <div class="flexItem">
+            <button class="button">
+              <div class="communityHomeContainer">
+                <img
+                  class="communityHomeButton"
+                  src="../views/images/Food1.jpg"
+                  alt="Food Community Avatar"
+                />
+                Food Community
+              </div>
+            </button>
+          </div>
+          <div class="flexItem">
+            <button class="button">
+              <div class="communityHomeContainer">
+                <img
+                  class="communityHomeButton"
+                  src="../views/images/Nature1.jpg"
+                  alt="Nature Community Avatar"
+                />
+                Nature Community
+              </div>
+            </button>
+          </div>
+        </div>
+      </nav>
+      <div class="sideArea">
+        <div class="sideTitleContainer">Make a new post!</div>
+
+        <div class="sideMainContainer">
+          <div class="formPage">
+            <form id="my-form" class="myForm">
+              <div class="formGroup">
+                <label> Your post: </label>
+                <input
+                  type="text"
+                  name=""
+                  id="post"
+                  placeholder="What are your thoughts?"
+                  class="inputArea"
+                />
+              </div>
+              <input type="submit" value="Post" class="btn buttonHover" />
+            </form>
+            <ul class="posts"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../views/NewPost.js"></script>
+  </body>
+</html>
