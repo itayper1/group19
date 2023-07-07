@@ -1,0 +1,274 @@
+moudles : express, mysql2, path, body parser
+
+נתיב המחיקה הוא localhost:3000/DeleteTables
+
+יצירת הטבלאות והכנסת נתונים בהם
+
+const createTables = () => {
+  const createUsersTableQuery = `
+      CREATE TABLE IF NOT EXISTS users (
+        UserID INT PRIMARY KEY AUTO_INCREMENT,
+        UserName VARCHAR(255) NOT NULL UNIQUE,
+        FirstName VARCHAR(255) NULL,
+        LastName VARCHAR(255) NULL,
+        Email VARCHAR(255) NOT NULL UNIQUE,
+        Password VARCHAR(255) NOT NULL,
+        NumOfFollowers INT NOT NULL,
+        JoinDate DATE NOT NULL,
+        Bio VARCHAR(255) NOT NULL,
+        Private INT NULL
+      ) ENGINE = InnoDB DEFAULT CHARSET=utf8
+    `;
+
+  const createCommunitiesTableQuery = `
+      CREATE TABLE IF NOT EXISTS communities (
+        CommunityID INT PRIMARY KEY AUTO_INCREMENT,
+        Name VARCHAR(255) NOT NULL UNIQUE,
+        NumOfUsers INT NOT NULL,
+        Description VARCHAR(255) NOT NULL,
+        Private int NOT NULL
+      ) ENGINE = InnoDB DEFAULT CHARSET=utf8
+    `;
+
+  const createPostsTableQuery = `
+      CREATE TABLE IF NOT EXISTS posts (
+        PostID INT PRIMARY KEY AUTO_INCREMENT,
+        Post VARCHAR(255) NOT NULL,
+        NumOfLikes INT NOT NULL,
+        NumOfComments INT NOT NULL,
+        NumOfViews INT NOT NULL
+      ) ENGINE = InnoDB DEFAULT CHARSET=utf8
+    `;
+
+  const createCommentsTableQuery = `
+    CREATE TABLE IF NOT EXISTS comments (
+        PostID INT NOT NULL,
+        CommentNumber INT NOT NULL,
+        Comment VARCHAR(255) NOT NULL,
+        NumOfLikes INT NOT NULL,
+        NumOfComments INT NOT NULL,
+        NumOfViews INT NOT NULL,
+        PRIMARY KEY (PostID, commentNumber),
+        FOREIGN KEY (PostID) REFERENCES posts(PostID)
+      ) ENGINE = InnoDB DEFAULT CHARSET=utf8
+    `;
+
+  const createJoinedTableQuery = `
+    CREATE TABLE IF NOT EXISTS joined (
+        UserID INT NOT NULL,
+        CommunityID INT NOT NULL,
+        JoinDate DATE NOT NULL,
+        PRIMARY KEY (UserID, CommunityID),
+        FOREIGN KEY (UserID) REFERENCES users(UserID),
+        FOREIGN KEY (CommunityID) REFERENCES communities(CommunityID)
+      ) ENGINE = InnoDB DEFAULT CHARSET=utf8
+    `;
+
+  const createPostedTableQuery = `
+    CREATE TABLE IF NOT EXISTS posted (
+        PostID INT NOT NULL,
+        UserID INT NOT NULL,
+        CommunityID INT NOT NULL,
+        PostDate DATE NOT NULL,
+        Liked INT NOT NULL,
+        Shared INT NOT NULL,
+        Reported INT NOT NULL,
+        PRIMARY KEY (UserID, PostID),
+        FOREIGN KEY (PostID) REFERENCES posts(PostID),
+        FOREIGN KEY (UserID) REFERENCES users(UserID),
+        FOREIGN KEY (CommunityID) REFERENCES communities(CommunityID)
+      ) ENGINE = InnoDB DEFAULT CHARSET=utf8
+    `;
+
+  const createRelationsTableQuery = `
+    CREATE TABLE IF NOT EXISTS relations (
+        UserID1 INT NOT NULL,
+        UserID2 INT NOT NULL,
+        Follows INT NOT NULL,
+        Blocked INT NOT NULL,
+        RelationDate DATE NOT NULL,
+        FOREIGN KEY (UserID1) REFERENCES users(UserID),
+        FOREIGN KEY (UserID2) REFERENCES users(UserID)
+      ) ENGINE = InnoDB DEFAULT CHARSET=utf8
+    `;
+
+  sql.query(createUsersTableQuery, (err, mysqlres) => {
+    if (err) {
+      console.log("could not create the table users: ", err);
+      return;
+    }
+    console.log("created table users");
+  });
+  sql.query(createCommunitiesTableQuery, (err, mysqlres) => {
+    if (err) {
+      console.log("could not create the table communities: ", err);
+      return;
+    }
+    console.log("Created table communities");
+  });
+
+  sql.query(createPostsTableQuery, (err, mysqlres) => {
+    if (err) {
+      console.log("could not create the table posts: ", err);
+      return;
+    }
+    console.log("Created table posts");
+  });
+
+  sql.query(createCommentsTableQuery, (err, mysqlres) => {
+    if (err) {
+      console.log("could not create the table comments: ", err);
+      return;
+    }
+    console.log("Created table comments");
+  });
+
+  sql.query(createJoinedTableQuery, (err, mysqlres) => {
+    if (err) {
+      console.log("could not create the table joined: ", err);
+      return;
+    }
+    console.log("Created table joined");
+  });
+
+  sql.query(createPostedTableQuery, (err, mysqlres) => {
+    if (err) {
+      console.log("could not create the table posted: ", err);
+      return;
+    }
+    console.log("Created table posted");
+  });
+
+  sql.query(createRelationsTableQuery, (err, mysqlres) => {
+    if (err) {
+      console.log("could not create the table relations: ", err);
+      return;
+    }
+    console.log("Created table relations");
+  });
+
+  const insertUsersQuery = `
+  INSERT INTO users (UserName, FirstName, LastName, Email, Password, NumOfFollowers, JoinDate, Bio, Private)
+  VALUES
+    ('TheRock', 'The', 'Rock', 'user1@example.com', 'password1', 10, '2022-01-01', 'Bio 1', 1),
+    ('SteveC', 'Steve', 'Carrel', 'user2@example.com', 'password2', 5, '2022-01-02', 'Bio 2', 0),
+    ('Obama', 'Obama', 'Obama', 'user3@example.com', 'password3', 8, '2022-01-03', 'Bio 3', 1),
+    ('God', 'Morgan', 'Freeman', 'user4@example.com', 'password4', 15, '2022-01-04', 'Bio 4', 0),
+    ('itay', 'itay', 'persky', 'user5@example.com', '123123', 20, '2022-01-05', 'Bio 5', 1)
+`;
+
+  const insertCommunitiesQuery = `
+  INSERT INTO communities (Name, NumOfUsers, Description, Private)
+  VALUES
+    ('NatureCommunity', 100, 'Community for nature lovers', 0),
+    ('FoodCommunity', 50, 'Community for food lovers', 1),
+    ('FoodLovers', 80, 'We love food here', 0),
+    ('Cars', 120, 'Car community', 1),
+    ('Community 5', 90, 'Description 5', 0)
+`;
+
+  const insertPostsQuery = `
+  INSERT INTO posts (Post, NumOfLikes, NumOfComments, NumOfViews)
+  VALUES
+    ('Post 1', 20, 5, 100),
+    ('Post 2', 15, 3, 80),
+    ('Post 3', 10, 2, 50),
+    ('Post 4', 30, 8, 150),
+    ('Post 5', 25, 6, 120)
+`;
+
+  const insertCommentsQuery = `
+  INSERT INTO comments (PostID, CommentNumber, Comment, NumOfLikes, NumOfComments, NumOfViews)
+  VALUES
+    (1, 1, 'Comment 1', 5, 2, 10),
+    (1, 2, 'Comment 2', 3, 1, 8),
+    (2, 2, 'Comment 3', 2, 1, 5),
+    (3, 1, 'Comment 4', 4, 3, 12),
+    (4, 1, 'Comment 5', 6, 4, 15)
+`;
+
+  const insertJoinedQuery = `
+  INSERT INTO joined (UserID, CommunityID, JoinDate)
+  VALUES
+    (1, 1, '2022-01-01'),
+    (2, 1, '2022-01-02'),
+    (3, 2, '2022-01-03'),
+    (4, 2, '2022-01-04'),
+    (5, 3, '2022-01-05')
+`;
+
+  const insertPostedQuery = `
+  INSERT INTO posted (PostID, UserID, CommunityID, PostDate, Liked, Shared, Reported)
+  VALUES
+    (1, 1, 1, '2022-01-01', 1, 0, 0),
+    (2, 1, 1, '2022-01-02', 0, 1, 0),
+    (3, 2, 2, '2022-01-03', 1, 1, 0),
+    (4, 2, 2, '2022-01-04', 0, 0, 0),
+    (5, 3, 3, '2022-01-05', 1, 0, 1)
+`;
+
+  const insertRelationsQuery = `
+  INSERT INTO relations (UserID1, UserID2, Follows, Blocked, RelationDate)
+  VALUES
+    (1, 2, 1, 0, '2022-01-01'),
+    (2, 3, 1, 0, '2022-01-02'),
+    (3, 1, 0, 1, '2022-01-03'),
+    (4, 1, 1, 0, '2022-01-04'),
+    (5, 2, 0, 1, '2022-01-05')
+`;
+
+  sql.query(insertUsersQuery, (err, mysqlres) => {
+    if (err) {
+      console.log("Error inserting data into the users table:", err);
+    }
+    console.log("Inserted rows into the users table:", mysqlres.affectedRows);
+  });
+
+  sql.query(insertCommunitiesQuery, (err, mysqlres) => {
+    if (err) {
+      console.log("Error inserting data into the communities table:", err);
+    }
+    console.log(
+      "Inserted rows into the communities table:",
+      mysqlres.affectedRows
+    );
+  });
+
+  sql.query(insertPostsQuery, (err, mysqlres) => {
+    if (err) {
+      console.log("Error inserting data into the posts table:", err);
+    }
+    console.log("Inserted rows into the posts table:", mysqlres.affectedRows);
+  });
+
+  sql.query(insertCommentsQuery, (err, mysqlres) => {
+    if (err) {
+      console.log("Error inserting data into the comments table:", err);
+    }
+    console.log("Inserted rows into the comments table:",  mysqlres.affectedRows);
+  });
+
+  sql.query(insertJoinedQuery, (err, mysqlres) => {
+    if (err) {
+      console.log("Error inserting data into the joined table:", err);
+    }
+    console.log("Inserted rows into the joined table:", mysqlres.affectedRows);
+  });
+
+  sql.query(insertPostedQuery, (err, mysqlres) => {
+    if (err) {
+      console.log("Error inserting data into the posted table:", err);
+    }
+    console.log("Inserted rows into the posted table:", mysqlres.affectedRows);
+  });
+
+  sql.query(insertRelationsQuery, (err, mysqlres) => {
+    if (err) {
+      console.log("Error inserting data into the relations table:", err);
+    }
+    console.log(
+      "Inserted rows into the relations table:",
+      mysqlres.affectedRows
+    );
+  });
+};
